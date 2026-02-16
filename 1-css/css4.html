@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<!-- Створіть Flexbox-галерею з трьох блоків, 
+які вирівняні по центру. Кожен блок повинен мати 
+розмір 100x100 пікселів і різні кольори.
+
+Використовуйте display: flex у CSS.
+Задайте ширину та висоту для кожного блоку. -->
+<head>
+    <style>
+        /* Ваш CSS тут */
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            align-content: center;
+            justify-items: center;
+        }
+
+        .container div{
+            width: 100px;
+            height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div style="color: red;">Блок 1</div>
+        <div style="color: green;">Блок 2</div>
+        <div style="color: blue;">Блок 3</div>
+    </div>
+</body>
+</html>
