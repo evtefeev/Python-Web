@@ -3,6 +3,8 @@ import mimetypes
 import pathlib
 import urllib.parse
 
+import template
+
 
 class HttpHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -11,6 +13,8 @@ class HttpHandler(BaseHTTPRequestHandler):
             self.send_html_file('index.html')
         elif pr_url.path == "/search":
             self.send_html_file('search.html')
+        elif pr_url.path == "/about":
+            self.send_html_file('about.html')
         elif pathlib.Path().joinpath(pr_url.path[1:]).exists():  # Статичні ресурси
             if pr_url.path.startswith("/static"):
                 self.send_static()
@@ -41,8 +45,9 @@ class HttpHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
         try:
-            with open(f'.{self.path}', 'rb') as file:
-                self.wfile.write(file.read())
+            with open(f'.{self.path}', 'r') as file:
+                rendered_file = template.render(file.read())
+                self.wfile.write(rendered_file.encode())
         except FileNotFoundError:
             self.send_html_file('error.html', 404)
 
