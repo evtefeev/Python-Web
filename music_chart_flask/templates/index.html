@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Музичний чарт</title>
     <link rel="stylesheet" href="/static/style.css">
 </head>
+
 <body>
-    <h1 class = "top-title">Топ пісень</h1>
+    <h1 class="top-title">Топ пісень</h1>
     <ul id="songs_list">
         {% for song in songs %}
-            <li>{{song[1]}} - {{songs[2]}}</li>
+        <li>{{song[1]}} - {{song[2]}}</li>
 
         {% endfor %}
-        
+
     </ul>
     <nav>
         <a href="/search">Пошук пісні</a>
@@ -21,4 +23,5 @@
     </nav>
     <script src="/static/script.js"></script>
 </body>
+
 </html>

@@ -26,18 +26,19 @@ songs = [
     "Chainsmokers - Closer",
     "Linkin Park - Numb",
     "Katy Perry - Roar",
-    "Sam Smith - Stay With Me"
+    "Sam Smith - Stay With Me",
 ]
+
 
 def create():
     # Створення таблиці для збереження пісень
-    cursor.execute('''
+    cursor.execute("""
     CREATE TABLE IF NOT EXISTS songs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         artist TEXT NOT NULL,
         song_name TEXT NOT NULL   
     )
-    ''')
+    """)
 
     print("Таблиця 'songs' створена успішно!")
     connection.commit()
@@ -46,11 +47,14 @@ def create():
 def fill():
     # Додавання даних до таблиці
     for song in songs:
-        artist, song_name = song.split(' - ')
-        cursor.execute('''
+        artist, song_name = song.split(" - ")
+        cursor.execute(
+            """
         INSERT INTO songs (artist, song_name)
         VALUES (?, ?)
-        ''', (artist, song_name))
+        """,
+            (artist, song_name),
+        )
     connection.commit()
     print("Таблиця 'songs' заповнена!")
 
@@ -65,7 +69,19 @@ def songs_to_list(songs):
     res = []
     for song in songs:
         res.append(f"{song[1]} -  {song[2]}")
-    return(res)
+    return res
+
+
+def search_songs(query: str):
+    cursor.execute(
+        """
+        SELECT id, artist, song_name
+        FROM songs
+        WHERE artist LIKE ? OR song_name LIKE ?
+    """,
+        (f"%{query}%", f"%{query}%"),
+    )
+    return cursor.fetchall()
 
 
 def main():
