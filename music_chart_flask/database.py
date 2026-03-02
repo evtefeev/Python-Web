@@ -59,10 +59,16 @@ def fill():
     print("Таблиця 'songs' заповнена!")
 
 
-def get():
+def get(id=None):
     # Виведення всіх записів із таблиці
     cursor.execute("SELECT * FROM songs")
-    return cursor.fetchall()
+    songs =  cursor.fetchall()
+    if id:
+        for song in songs:
+            if song[0] == id:
+                return song
+        return None
+    return songs
 
 
 def songs_to_list(songs):

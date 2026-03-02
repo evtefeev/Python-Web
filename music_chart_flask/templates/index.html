@@ -12,7 +12,7 @@
     <h1 class="top-title">Топ пісень</h1>
     <ul id="songs_list">
         {% for song in songs %}
-        <li>{{song[1]}} - {{song[2]}}</li>
+        <li><a href="/song/{{song[0]}}">{{song[1]}} - {{song[2]}}</a></li>
 
         {% endfor %}
 

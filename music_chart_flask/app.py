@@ -18,5 +18,10 @@ def search():
 def about():
     return render_template("about.html")
 
+
+@app.route("/song/<int:id>")
+def song(id):
+    return render_template("song.html", song = database.get(id))
+
 if __name__ == "__main__":
     app.run(debug=True)
