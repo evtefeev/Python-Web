@@ -1,0 +1,20 @@
+# Завдання 1.
+# Виконання GET-запиту у Python (requests.get())
+# Виконати GET-запит до публічного API https://jsonplaceholder.typicode.com/posts
+# Отримати список постів
+# Вивести у консоль перші 5 постів у форматі ID: Назва посту
+import requests
+data = requests.get("https://jsonplaceholder.typicode.com/posts").json()
+for post in data:
+    print(f"{post['id']}: {post['title']}")
+
+# Завдання 2. 
+# Створити веб-дадаток за допомогою фреймворку Flask. 
+# На головній сторінці потрібно розмістити першу цитату 
+# зі сторінки https://quotes.toscrape.com/ . 
+# Саму цитату ми отримуємо з використанням парсингу.
+
+
+# Завдання 3.
+# Відправка HTTP-запитів у Postman
+# <https://jsonplaceholder.typicode.com/posts>
