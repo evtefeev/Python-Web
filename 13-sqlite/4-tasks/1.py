@@ -1,9 +1,10 @@
 import sqlite3
 
-from flask import app, g, render_template, request
+from flask import Flask, g, render_template, request
 
 
 DATABASE = "data.db"
+app = Flask(__name__)
 
 
 def get_db():
@@ -53,4 +54,6 @@ def join():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    # app.run(debug=True)
+    with app.app_context():
+        create_table()
