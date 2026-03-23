@@ -1,1 +1,1 @@
-URL = ""
+URL = "postgresql://neondb_owner:npg_a9xZfnHRXvA2@ep-falling-frog-al0u00ga-pooler.c-3.eu-central-1.aws.neon.tech/neondb?channel_binding=require&sslmode=require"
