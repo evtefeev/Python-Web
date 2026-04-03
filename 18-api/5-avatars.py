@@ -1,0 +1,1 @@
+avatar_url = "https://api.dicebear.com/9.x/adventurer/svg?seed=x"
