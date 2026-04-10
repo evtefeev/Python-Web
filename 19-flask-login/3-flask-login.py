@@ -1,10 +1,10 @@
 from flask import (
     Flask,
+    render_template,
     request,
     redirect,
     url_for,
     flash,
-    render_template_string,
 )
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -63,33 +63,6 @@ def load_user(user_id):
     return User.get(user_id)
 
 
-base_template = """
-<!DOCTYPE html>
-<html lang="uk">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ title }}</title>
-</head>
-<body>
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <ul style="color:red;">
-        {% for message in messages %}
-          <li>{{ message }}</li>
-        {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
-    {{ body | safe }}
-    <br>
-    {% if current_user.is_authenticated %}
-      <p>Ви увійшли як {{ current_user.username }} | <a href="{{ url_for('logout') }}">Вийти</a></p>
-    {% endif %}
-</body>
-</html>
-"""
-
-
 @app.route("/")
 def index():
     if current_user.is_authenticated:
@@ -110,17 +83,7 @@ def login():
         else:
             flash("Невірне ім'я користувача або пароль.")
             return redirect(url_for("login"))
-    body = """
-    <h2>Вхід</h2>
-    <form method="post">
-      Ім'я користувача: <input type="text" name="username"><br>
-      Пароль: <input type="password" name="password"><br>
-      <input type="submit" value="Увійти">
-    </form>
-    <br>
-    <a href="{{ url_for('register') }}">Реєстрація</a>
-    """
-    return render_template_string(base_template, title="Вхід", body=body)
+    return render_template("login.html", title="Вхід")
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -143,29 +106,15 @@ def register():
             conn.close()
             flash("Користувач з таким ім'ям вже існує. Спробуйте інше ім'я.")
             return redirect(url_for("register"))
-    body = """
-    <h2>Реєстрація</h2>
-    <form method="post">
-      Ім'я користувача: <input type="text" name="username"><br>
-      Пароль: <input type="password" name="password"><br>
-      <input type="submit" value="Зареєструватися">
-    </form>
-    <br>
-    <a href="{{ url_for('login') }}">Вхід</a>
-    """
-    return render_template_string(base_template, title="Реєстрація", body=body)
+    return render_template("register.html", title="Реєстрація")
 
 
 @app.route("/dashboard")
 @login_required
 def dashboard():
-    body = """
-    <h2>Панель управління</h2>
-    <p>Ласкаво просимо, {{ current_user.username }}!</p>
-    <p>Це захищена сторінка, доступна лише для авторизованих користувачів.</p>
-    """
-    return render_template_string(
-        base_template, title="Dashboard", body=body, current_user=current_user
+
+    return render_template(
+        "dashboard.html", title="Dashboard", current_user=current_user
     )
 
 
