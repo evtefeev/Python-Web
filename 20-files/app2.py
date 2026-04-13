@@ -1,9 +1,5 @@
-import uuid
-
 from flask import Flask
 from flask import render_template, request
-from sqlalchemy import all_
-from database import Session, User_files
 import os
 
 import magic
