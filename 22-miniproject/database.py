@@ -1,3 +1,4 @@
+
 from sqlalchemy import create_engine, String, Float, Integer, ForeignKey, Boolean, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship, sessionmaker
 from sqlalchemy.orm import DeclarativeBase
@@ -6,13 +7,18 @@ from typing import List
 from flask_login import UserMixin  # pip install flask-login
 
 import bcrypt # pip install bcrypt
-from config import URL
+import dotenv
+import os
+
+dotenv.load_dotenv()
+URL = os.environ.get("URL")
+
 PGUSER = "твої данні"
 PGPASSWORD = "твої данні"
 
 # engine = create_engine(f"postgresql+psycopg2://{PGUSER}:{PGPASSWORD}@localhost:5433/messanger_project", echo=True)
 # engine = create_engine("sqlite:///messenger_project.db", echo=True)
-engine = create_engine(URL, echo=True)
+engine = create_engine(URL, echo=False)
 Session = sessionmaker(bind=engine)
 
 class Base(DeclarativeBase):

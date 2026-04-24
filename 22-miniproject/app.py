@@ -1,3 +1,5 @@
+import os
+
 from flask import (
     Flask,
     flash,
@@ -11,12 +13,22 @@ import secrets
 
 from flask_login import current_user, login_required, login_user, logout_user
 from keyboard import send
+from sqlalchemy import func
 from database import Session, Users
 
-app = Flask(__name__)
 
 from database import Session, Users, Friends, Messages
 from flask_login import LoginManager
+import logging
+from flask_caching import Cache
+import dotenv
+
+dotenv.load_dotenv()
+
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
 
 app = Flask(__name__)
 
@@ -24,11 +36,19 @@ app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024  # 16MB
 app.config["MAX_FORM_MEMORY_SIZE"] = 1024 * 1024  # 1MB
 app.config["MAX_FORM_PARTS"] = 500
 
-app.config["SECRET_KEY"] = '#cv)3v7w$*s3fk;5c!@y0?:?№3"9)#'
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
 
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
+
+cache = Cache()
+app.config["CACHE_TYPE"] = "simple"  # Тип кешу
+app.config["CACHE_DEFAULT_TIMEOUT"] = 30  # Час очікування кешу в секундах
+app.config["CACHE_KEY_PREFIX"] = "myapp_"  # Префікс ключів кешу
+cache.init_app(app)
+
+
 
 
 @login_manager.user_loader
@@ -57,11 +77,29 @@ def apply_csp(response):
     return response
 
 
+@cache.cached(timeout=100)
+def get_user_count():
+    with Session() as session:
+        count = session.query(func.count(Users.id)).scalar()
+        return count
+
+@cache.cached(timeout=100)
+def get_messages_count():
+    with Session() as session:
+        count = session.query(func.count(Messages.id)).scalar()
+        return count
+
+
 @app.route("/")
 @app.route("/home")
 @login_required
 def home():
-    return render_template("index.html", username=current_user.nickname)
+    return render_template(
+        "index.html", 
+        username=current_user.nickname,
+        users_count = get_user_count(),
+        messages_count=get_messages_count()
+        )
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -78,6 +116,7 @@ def register():
                 user.set_password(password)
                 session.add(user)
                 session.commit()
+                app.logger.info(f"User registered {nickname}")
                 return redirect(url_for("login"))
 
             flash("Неправильний nickname", "danger")
@@ -94,6 +133,7 @@ def login():
             user = session.query(Users).filter_by(nickname=nickname).first()
             if user and user.check_password(password):
                 login_user(user)
+                app.logger.info(f"User login {nickname}")
                 return redirect(url_for("home"))
 
             flash("Неправильний nickname або пароль!", "danger")
@@ -128,6 +168,9 @@ def search_friends():
                     )
                     session.add(new_friend_request)
                     session.commit()
+                    app.logger.info(
+                        f"Friend request {current_user.nickname} {user_search_name}"
+                    )
                     flash("Запит на дружбу успішно надіслано!", "success")
                 else:
                     flash(
@@ -212,6 +255,7 @@ def create_message(user_name):
                 )
                 session.add(new_message)
                 session.commit()
+                app.logger.info(f"New message {user_recipient.nickname}")
                 flash("Повідомлення надіслано!", "success")
 
             else:

@@ -13,3 +13,15 @@ Messenger App Checklist
  - [x] Send Message Page
 
  - [x] Messages Page
+
+ - [X] Logging
+
+Register
+Login
+Add friend
+Send message
+
+
+ - [x] Caching
+
+ - [ ] Deploy
